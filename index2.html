@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Advanced To-Do App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f2f2f2;
+      color: #333;
+    }
+    header {
+      background-color: #6200ea;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    nav {
+      background-color: #3700b3;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 20px auto;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h2 {
+      color: #6200ea;
+    }
+    input, select, button {
+      padding: 10px;
+      margin: 5px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #6200ea;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #3700b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      padding: 10px;
+      border: 1px solid #ddd;
+      text-align: center;
+    }
+    th {
+      background-color: #eee;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      background-color: #ddd;
+      margin-top: 30px;
+    }
+    .dark-mode {
+      background-color: #1e1e1e;
+      color: white;
+    }
+    .dark-mode header,
+    .dark-mode nav,
+    .dark-mode footer {
+      background-color: #121212;
+      color: white;
+    }
+    .dark-mode .container {
+      background: #333;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📝 Advanced To-Do App</h1>
+  </header>
+  <nav>
+    <a href="#home">Home</a>
+    <a href="#tasks">Tasks</a>
+    <a href="#about">About</a>
+    <a href="#settings">Settings</a>
+  </nav>
+  <div class="container" id="home">
+    <h2>Welcome</h2>
+    <p>This is an advanced To-Do List application with multi-category support, deadline sorting, and dark mode.</p>
+  </div>
+  <div class="container" id="tasks">
+    <h2>Manage Tasks</h2>
+    <input type="text" id="taskInput" placeholder="Enter task" />
+    <select id="categoryInput">
+      <option value="Work">Work</option>
+      <option value="Personal">Personal</option>
+      <option value="Study">Study</option>
+    </select>
+    <input type="date" id="deadlineInput" />
+    <button onclick="addTask()">Add Task</button>
+    <button onclick="toggleDarkMode()">Toggle Dark Mode</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Task</th>
+          <th>Category</th>
+          <th>Deadline</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="taskTable"></tbody>
+    </table>
+  </div>
+  <div class="container" id="about">
+    <h2>About This App</h2>
+    <p>This app is built using HTML, CSS, and JavaScript. It supports saving data in localStorage and organizing tasks efficiently with visual enhancements.</p>
+  </div>
+  <div class="container" id="settings">
+    <h2>Settings</h2>
+    <p>Here, you can clear your local data or toggle themes.</p>
+    <button onclick="clearTasks()">Clear All Tasks</button>
+  </div>
+  <footer>
+    &copy; 2025 To-Do App. All rights reserved.
+  </footer>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function saveTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+    function renderTasks() {
+      const taskTable = document.getElementById("taskTable");
+      taskTable.innerHTML = "";
+      tasks.forEach((task, index) => {
+        taskTable.innerHTML += `
+          <tr>
+            <td>${task.name}</td>
+            <td>${task.category}</td>
+            <td>${task.deadline}</td>
+            <td><button onclick="deleteTask(${index})">Delete</button></td>
+          </tr>
+        `;
+      });
+    }
+
+    function addTask() {
+      const name = document.getElementById("taskInput").value.trim();
+      const category = document.getElementById("categoryInput").value;
+      const deadline = document.getElementById("deadlineInput").value;
+      if (!name || !deadline) return alert("Please enter task and deadline");
+      tasks.push({ name, category, deadline });
+      tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+      saveTasks();
+      renderTasks();
+      document.getElementById("taskInput").value = "";
+      document.getElementById("deadlineInput").value = "";
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    }
+
+    function clearTasks() {
+      if (confirm("Are you sure you want to delete all tasks?")) {
+        tasks = [];
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
